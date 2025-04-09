@@ -7,7 +7,10 @@ import { runStackedConfetti } from "@/lib/confetti";
 
 export default function Home() {
   const [generatedName, setGeneratedName] = useState("Click to generate a name!");
-  const [animationCount, setAnimationCount] = useState(0);
+  const [
+    animationCount,
+    setAnimationCount
+  ] = useState(0);
   const [generatedNames, setGeneratedNames] = useState<string[]>([]);
 
   const handleReset = useCallback(() => {
