@@ -7,27 +7,31 @@ import { runStackedConfetti } from "@/lib/confetti";
 
 export default function Home() {
   const [generatedName, setGeneratedName] = useState("Click to generate a name!");
-  const [
-    animationCount,
-    setAnimationCount
-  ] = useState(0);
+  const [animationCount, setAnimationCount] = useState(0);
   const [generatedNames, setGeneratedNames] = useState<string[]>([]);
 
   const handleReset = useCallback(() => {
     setGeneratedNames([]);
     setGeneratedName("Click to generate a name!");
+    setAnimationCount(0);
   }, []);
 
   const handleGenerateName = useCallback(() => {
+    // Use the current animationCount in the logic.
+    if (animationCount >= 10) return;
+
     const newName = generateFunnyName();
     setGeneratedName(newName);
     setGeneratedNames(prev => [newName, ...prev].slice(0, 1000));
-    
+
+    // Increase the animation count by one, up to a maximum value
     setAnimationCount(prev => Math.min(prev + 1, 10));
+
+    // Launch the confetti, then decrease the animation count when complete
     runStackedConfetti(() => {
       setAnimationCount(prev => Math.max(prev - 1, 0));
     });
-  }, []);
+  }, [animationCount]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 py-12 px-4">
@@ -42,10 +46,12 @@ export default function Home() {
                 {generatedName}
               </p>
             </div>
-            <Button 
+            <Button
+              onClick={handleGenerateName}
+              disabled={animationCount >= 10}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
-              onClick={handleGenerateName}>
-              Generate Name
+            >
+              {animationCount >= 10 ? "Animation busy..." : "Generate Name"}
             </Button>
           </div>
         </div>
