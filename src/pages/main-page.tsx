@@ -1,17 +1,24 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { generateFunnyNameWithDebug, resetSeed, GeneratorParams } from "@/lib/name-generator";
-import { runStackedConfetti } from "@/lib/confetti";
+import { Copy, Check } from "lucide-react";
+import { 
+  // runStackedConfetti,
+  createNeonAnimation
+ } from "@/lib/confetti";
+import { NeonText } from "@/components/neon-text";
 
 export default function Home() {
   // State for generated name, debug log, and history.
   const [generatedName, setGeneratedName] = useState("Click to generate a name!");
   const [debugLog, setDebugLog] = useState("");
   const [generatedNames, setGeneratedNames] = useState<string[]>([]);
-  const [animationCount, setAnimationCount] = useState(0);
+  // const [animationCount, setAnimationCount] = useState(0);
+  const [copiedStates, setCopiedStates] = useState<{[key: string]: boolean}>({});
+  const nameRef = useRef<HTMLParagraphElement>(null);
 
   // Generator parameters (adjustable via sliders in the popover).
   const [multiplier, setMultiplier] = useState<number>(1664525);
@@ -23,11 +30,27 @@ export default function Home() {
     setGeneratedNames([]);
     setGeneratedName("Click to generate a name!");
     setDebugLog("");
-    setAnimationCount(0);
+    // setAnimationCount(0);
+  }, []);
+
+  const handleCopy = useCallback((text: string, index?: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedStates(prev => ({
+      ...prev,
+      [index !== undefined ? `list-${index}` : 'current']: true
+    }));
+    setTimeout(() => {
+      setCopiedStates(prev => ({
+        ...prev,
+        [index !== undefined ? `list-${index}` : 'current']: false
+      }));
+    }, 2000);
   }, []);
 
   const handleGenerateName = useCallback(() => {
-    if (animationCount >= 10) return;
+    // if (animationCount >= 10) return;
+
+
 
     resetSeed();
     const params: GeneratorParams = {
@@ -41,27 +64,51 @@ export default function Home() {
     setGeneratedName(name);
     setDebugLog(log);
     setGeneratedNames(prev => [name, ...prev].slice(0, 1000));
-    setAnimationCount(prev => Math.min(prev + 1, 10));
+    // setAnimationCount(prev => Math.min(prev + 1, 10));
 
-    runStackedConfetti(() => {
-      setAnimationCount(prev => Math.max(prev - 1, 0));
-    });
-  }, [animationCount, multiplier, increment, modulus, entropyWeight]);
+    // runStackedConfetti(() => {
+    //   setAnimationCount(prev => Math.max(prev - 1, 0));
+    // });
+    if (nameRef.current) {
+      createNeonAnimation(nameRef.current);
+    }
+  }, [
+    // animationCount, 
+    nameRef,
+    multiplier, 
+    increment, 
+    modulus, 
+    entropyWeight]);
 
   return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="max-w-screen mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <h1 className="p-3 text-3xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+    <div className="min-h-screen py-6 px-4 ">
+        <h1 className="p-3 lg:text-6xl sm:text-3xl font-bold text-center mb-3 ">
           Aesthetic Generator
         </h1>
-        <p className="text-4xl font-extrabold text-gray-900 text-center">{generatedName
-          .split(' ')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ')}</p>
+      <div className="max-w-screen mx-auto bg-gray-900 rounded-xl shadow-lg overflow-hidden">
+        {/* <h1 className="p-3 text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+          Aesthetic Generator
+        </h1> */}
+        <p ref={nameRef} className="lg:text-4xl sm:text-2xl font-extrabold text-gray-100 text-center mt-6">{generatedName && <NeonText text={generatedName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} />}
+          &nbsp; &nbsp;
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleCopy(generatedName)}
+              >
+                {copiedStates['current'] ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button></p>
         <div className="p-8 md:max-2xl:flex sm:flex-col justify-between" id="main-content">
           <div id="left" className="space-y-6 w-full">
 
             {/* Settings popover for adjustable parameters */}
+            <div className="w-[300px] mx-auto flex-col ">
+
             <Popover>
               <PopoverTrigger asChild>
                 <Button className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300">
@@ -81,7 +128,7 @@ export default function Home() {
                       value={multiplier}
                       onChange={(e) => setMultiplier(Number(e.target.value))}
                       className="w-full mt-1"
-                    />
+                      />
                     <span className="text-gray-500 text-xs">
                       Adjusts the multiplication factor in the LCG.
                     </span>
@@ -98,7 +145,7 @@ export default function Home() {
                       value={increment}
                       onChange={(e) => setIncrement(Number(e.target.value))}
                       className="w-full mt-1"
-                    />
+                      />
                     <span className="text-gray-500 text-xs">
                       Modifies the additive constant in the LCG.
                     </span>
@@ -115,7 +162,7 @@ export default function Home() {
                       value={modulus}
                       onChange={(e) => setModulus(Number(e.target.value))}
                       className="w-full mt-1"
-                    />
+                      />
                     <span className="text-gray-500 text-xs">
                       Sets the wrapping value for the LCG (typically a power of two).
                     </span>
@@ -132,7 +179,7 @@ export default function Home() {
                       value={entropyWeight}
                       onChange={(e) => setEntropyWeight(Number(e.target.value))}
                       className="w-full mt-1"
-                    />
+                      />
                     <span className="text-gray-500 text-xs">
                       Controls how much performance/timing entropy is incorporated.
                     </span>
@@ -143,15 +190,17 @@ export default function Home() {
 
             <Button
               onClick={handleGenerateName}
-              disabled={animationCount >= 10}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
-            >
-              {animationCount >= 10 ? "Animation busy..." : "Generate Name"}
+              // disabled={animationCount >= 10}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 mt-4"
+              >
+              {/* {animationCount >= 10 ? "Animation busy..." : "Generate Name"} */}
+              Generate Name
             </Button>
 
-            <div id="generated-names" className="border-t border-gray-100">
+              </div>
+            <div id="generated-names" className="border-t border-gray-100 max-w-[600px] mx-auto">
               <div className="p-6 space-y-3">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                <h2 className="text-lg font-semibold text-gray-300 mb-4">
                   Generated Names ({generatedNames.length}/1000)
                   {generatedNames.length > 0 && (
                     <Button
@@ -184,7 +233,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div id="right" className='w-full flex flex-col items-center'>
+          {/* <div id="right" className='w-full flex flex-col items-center'>
             <div className="text-center">
               {debugLog && (
                 <pre className="p-2 bg-slate-900 text-xs text-left whitespace-pre-wrap border rounded w-full h-full">
@@ -192,7 +241,7 @@ export default function Home() {
                 </pre>
               )}
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>

@@ -58,14 +58,6 @@ function applyCondition(
    Filtering Conditions (Candidates)
    ================================ */
 
-/** 1. Meme and Trend Alignment */
-function conditionMemeAlignment(firstWord: string, candidate: string): boolean {
-  const memeKeywords = ["glitch", "vapor", "neon", "cyber"];
-  const firstIsMeme = memeKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
-  // If first is meme-inspired, require candidate to include a meme keyword.
-  return !firstIsMeme || memeKeywords.some((kw) => candidate.toLowerCase().includes(kw));
-}
-
 /** 2. Explicit Consistency Rule */
 function conditionExplicitConsistency(firstWord: string, candidate: string): boolean {
   const explicitTerms = ["fuck", "shit", "damn", "bitch", "ass"];
@@ -73,29 +65,6 @@ function conditionExplicitConsistency(firstWord: string, candidate: string): boo
   return firstIsExplicit
     ? explicitTerms.some((term) => candidate.toLowerCase().includes(term))
     : !explicitTerms.some((term) => candidate.toLowerCase().includes(term));
-}
-
-/** 3. Multi-Word Balance Requirement */
-function conditionMultiWordBalance(firstWord: string, candidate: string): boolean {
-  const firstIsMulti = firstWord.trim().includes(" ");
-  const candidateIsMulti = candidate.trim().includes(" ");
-  // If first is multi-word, favor candidates that are single-word.
-  return firstIsMulti ? !candidateIsMulti : true;
-}
-
-/** 4. Abstract vs. Down-to-Earth Contrast */
-function conditionAbstractVersusDownToEarth(firstWord: string, candidate: string): boolean {
-  const abstractKeywords = ["celestial", "nebular", "quantum", "singularity", "ethereal"];
-  const tangibleKeywords = ["clown", "ninja", "rogue", "guerilla"];
-  const isAbstract = abstractKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
-  return !isAbstract || tangibleKeywords.some((kw) => candidate.toLowerCase().includes(kw));
-}
-
-/** 5. Rhythm and Sound Matching */
-function conditionRhythmAndSoundMatching(firstWord: string, candidate: string): boolean {
-  // Match by last character.
-  const lastChar = firstWord.trim().slice(-1).toLowerCase();
-  return candidate.trim().slice(-1).toLowerCase() === lastChar;
 }
 
 /** 6. Nostalgia & Retro References */
@@ -122,14 +91,6 @@ function conditionSubcultureAndCounterCultureTwist(firstWord: string, candidate:
   return !isMainstream || subcultureKeywords.some((kw) => candidate.toLowerCase().includes(kw));
 }
 
-/** 10. Contextual Irony Injection */
-function conditionContextualIronyInjection(firstWord: string, candidate: string): boolean {
-  const seriousKeywords = ["divine", "celestial", "infinite"];
-  const ironicKeywords = ["clown", "dude", "goof"];
-  const isSerious = seriousKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
-  return !isSerious || ironicKeywords.some((kw) => candidate.toLowerCase().includes(kw));
-}
-
 /** 15. Unexpected Genre-Mashups */
 function conditionUnexpectedGenreMashups(firstWord: string, candidate: string): boolean {
   const sciFiKeywords = ["cyber", "quantum", "digital"];
@@ -153,26 +114,12 @@ function conditionNerdRebelHybridization(firstWord: string, candidate: string): 
   return !hasNerdElement || rebelTerms.some((term) => candidate.toLowerCase().includes(term));
 }
 
-/** 18. Literal vs. Figurative Play */
-function conditionLiteralVsFigurativePlay(firstWord: string, candidate: string): boolean {
-  const figurativeKeywords = ["abstract", "surreal", "mystic"];
-  const literalKeywords = ["robot", "ninja", "samurai", "clown"];
-  const isFigurative = figurativeKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
-  return !isFigurative || literalKeywords.some((kw) => candidate.toLowerCase().includes(kw));
-}
-
 /** 21. Subcultural Archetype Alignment */
 function conditionSubculturalArchetypeAlignment(firstWord: string, candidate: string): boolean {
   const subcultureKeywords = ["grunge", "punk", "boho"];
   const archetypes = ["skater", "anarchist", "vagrant"];
   const isSubculture = subcultureKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
   return !isSubculture || archetypes.some((term) => candidate.toLowerCase().includes(term));
-}
-
-/** 25. Phonetic Alliteration or Rhyme Priority */
-function conditionPhoneticAlliterationOrRhyme(firstWord: string, candidate: string): boolean {
-  const firstLetter = firstWord.trim()[0].toLowerCase();
-  return candidate.trim()[0].toLowerCase() === firstLetter;
 }
 
 /** 28. Surreal Visual Imagery */
@@ -199,73 +146,130 @@ function conditionSynestheticPairing(firstWord: string, candidate: string): bool
   return !isBright || sensoryWords.some((kw) => candidate.toLowerCase().includes(kw));
 }
 
+// ==========
+// cringe ideas for pre-processing
+// ==========
+
+// /** 1. Meme and Trend Alignment */
+// function conditionMemeAlignment(firstWord: string, candidate: string): boolean {
+//   const memeKeywords = ["glitch", "vapor", "neon", "cyber"];
+//   const firstIsMeme = memeKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
+//   // If first is meme-inspired, require candidate to include a meme keyword.
+//   return !firstIsMeme || memeKeywords.some((kw) => candidate.toLowerCase().includes(kw));
+// }
+
+// /** 3. Multi-Word Balance Requirement */
+// function conditionMultiWordBalance(firstWord: string, candidate: string): boolean {
+//   const firstIsMulti = firstWord.trim().includes(" ");
+//   const candidateIsMulti = candidate.trim().includes(" ");
+//   // If first is multi-word, favor candidates that are single-word.
+//   return firstIsMulti ? !candidateIsMulti : true;
+// }
+
+// /** 4. Abstract vs. Down-to-Earth Contrast */
+// function conditionAbstractVersusDownToEarth(firstWord: string, candidate: string): boolean {
+//   const abstractKeywords = ["celestial", "nebular", "quantum", "singularity", "ethereal"];
+//   const tangibleKeywords = ["clown", "ninja", "rogue", "guerilla"];
+//   const isAbstract = abstractKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
+//   return !isAbstract || tangibleKeywords.some((kw) => candidate.toLowerCase().includes(kw));
+// }
+
+// /** 5. Rhythm and Sound Matching */
+// function conditionRhythmAndSoundMatching(firstWord: string, candidate: string): boolean {
+//   // Match by last character.
+//   const lastChar = firstWord.trim().slice(-1).toLowerCase();
+//   return candidate.trim().slice(-1).toLowerCase() === lastChar;
+// }
+
+// /** 10. Contextual Irony Injection */
+// function conditionContextualIronyInjection(firstWord: string, candidate: string): boolean {
+//   const seriousKeywords = ["divine", "celestial", "infinite"];
+//   const ironicKeywords = ["clown", "dude", "goof"];
+//   const isSerious = seriousKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
+//   return !isSerious || ironicKeywords.some((kw) => candidate.toLowerCase().includes(kw));
+// }
+
+// /** 18. Literal vs. Figurative Play */
+// function conditionLiteralVsFigurativePlay(firstWord: string, candidate: string): boolean {
+//   const figurativeKeywords = ["abstract", "surreal", "mystic"];
+//   const literalKeywords = ["robot", "ninja", "samurai", "clown"];
+//   const isFigurative = figurativeKeywords.some((kw) => firstWord.toLowerCase().includes(kw));
+//   return !isFigurative || literalKeywords.some((kw) => candidate.toLowerCase().includes(kw));
+// }
+
+// /** 25. Phonetic Alliteration or Rhyme Priority */
+// function conditionPhoneticAlliterationOrRhyme(firstWord: string, candidate: string): boolean {
+//   const firstLetter = firstWord.trim()[0].toLowerCase();
+//   return candidate.trim()[0].toLowerCase() === firstLetter;
+// }
+
 /* ================================
-   Post-Processing Modifiers
+   cringe Post-Processing Modifiers
    ================================ */
 
 /** 9. Randomized Mood Modifiers */
-function applyRandomizedMoodModifiers(name: string): string {
-  const modifiers = ["vibes", "no cap", "smh"];
-  if (Math.random() < 0.2) { // 20% chance
-    const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-    return `${name} ${modifier}`;
-  }
-  return name;
-}
+// function applyRandomizedMoodModifiers(name: string): string {
+//   const modifiers = ["vibes", "no cap", "smh"];
+//   if (Math.random() < 0.2) { // 20% chance
+//     const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+//     return `${name} ${modifier}`;
+//   }
+//   return name;
+// }
 
-/** 11. Emoji and Emoticon Inspirations */
-function applyEmojiEmoticonInspirations(name: string): string {
-  const emojis = ["😎", "😂", "🤖", "🔥"];
-  // If the name is short and playful, append an emoji.
-  if (name.length < 20 && Math.random() < 0.3) {
-    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-    return `${name} ${emoji}`;
-  }
-  return name;
-}
+// /** 11. Emoji and Emoticon Inspirations */
+// function applyEmojiEmoticonInspirations(name: string): string {
+//   const emojis = ["😎", "😂", "🤖", "🔥"];
+//   // If the name is short and playful, append an emoji.
+//   if (name.length < 20 && Math.random() < 0.3) {
+//     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+//     return `${name} ${emoji}`;
+//   }
+//   return name;
+// }
 
-/** 12. Internet Slang Integration */
-function applyInternetSlangIntegration(name: string): string {
-  const slangTerms = ["lit", "savage", "yeet"];
-  if (Math.random() < 0.25) {
-    const slang = slangTerms[Math.floor(Math.random() * slangTerms.length)];
-    return `${name} ${slang}`;
-  }
-  return name;
-}
+// /** 12. Internet Slang Integration */
+// function applyInternetSlangIntegration(name: string): string {
+//   const slangTerms = ["lit", "savage", "yeet"];
+//   if (Math.random() < 0.25) {
+//     const slang = slangTerms[Math.floor(Math.random() * slangTerms.length)];
+//     return `${name} ${slang}`;
+//   }
+//   return name;
+// }
 
-/** 13. Early Internet Nostalgia */
-function applyEarlyInternetNostalgia(name: string): string {
-  const retroAdditions = ["dial-up", "retro net"];
-  if (name.toLowerCase().includes("analog") && Math.random() < 0.3) {
-    const addition = retroAdditions[Math.floor(Math.random() * retroAdditions.length)];
-    return `${name} ${addition}`;
-  }
-  return name;
-}
+// /** 13. Early Internet Nostalgia */
+// function applyEarlyInternetNostalgia(name: string): string {
+//   const retroAdditions = ["dial-up", "retro net"];
+//   if (name.toLowerCase().includes("analog") && Math.random() < 0.3) {
+//     const addition = retroAdditions[Math.floor(Math.random() * retroAdditions.length)];
+//     return `${name} ${addition}`;
+//   }
+//   return name;
+// }
 
-/** 14. Self-Awareness and Meta Commentary */
-function applySelfAwarenessMetaCommentary(name: string): string {
-  if (Math.random() < 0.15) {
-    return `${name} (error 404: identity not found)`;
-  }
-  return name;
-}
+// /** 14. Self-Awareness and Meta Commentary */
+// function applySelfAwarenessMetaCommentary(name: string): string {
+//   if (Math.random() < 0.15) {
+//     return `${name} (error 404: identity not found)`;
+//   }
+//   return name;
+// }
 
-/** 19. Word Count Variability */
-function applyWordCountVariability(name: string): string {
-  const extras = ["the", "of", "and"];
-  if (Math.random() < 0.2) {
-    const words = name.split(" ");
-    if (words.length === 2) {
-      const extra = extras[Math.floor(Math.random() * extras.length)];
-      return `${words[0]} ${extra} ${words[1]}`;
-    }
-  }
-  return name;
-}
+// /** 19. Word Count Variability */
+// function applyWordCountVariability(name: string): string {
+//   const extras = ["the", "of", "and"];
+//   if (Math.random() < 0.2) {
+//     const words = name.split(" ");
+//     if (words.length === 2) {
+//       const extra = extras[Math.floor(Math.random() * extras.length)];
+//       return `${words[0]} ${extra} ${words[1]}`;
+//     }
+//   }
+//   return name;
+// }
 
-// /** 20. Hyper-Specific Pop Culture Reference */
+// // /** 20. Hyper-Specific Pop Culture Reference */
 // function applyHyperSpecificPopCultureReference(name: string): string {
 //   const popCultureReference = "rickroll";
 //   if (name.toLowerCase().includes("retro") && Math.random() < 0.2) {
@@ -274,26 +278,26 @@ function applyWordCountVariability(name: string): string {
 //   return name;
 // }
 
-/** 22. Randomized Speed and Intensity Modifiers */
-function applyRandomizedSpeedAndIntensityModifiers(name: string): string {
-  const modifiers = ["turbo", "blitz", "flash"];
-  if (Math.random() < 0.2) {
-    const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-    return `${modifier} ${name}`;
-  }
-  return name;
-}
+// /** 22. Randomized Speed and Intensity Modifiers */
+// function applyRandomizedSpeedAndIntensityModifiers(name: string): string {
+//   const modifiers = ["turbo", "blitz", "flash"];
+//   if (Math.random() < 0.2) {
+//     const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+//     return `${modifier} ${name}`;
+//   }
+//   return name;
+// }
 
-/** 23. Self-Deprecating Irony */
-function applySelfDeprecatingIrony(name: string): string {
-  const seriousTerms = ["divine", "celestial", "epic"];
-  if (seriousTerms.some(term => name.toLowerCase().includes(term))) {
-    return `wannabe ${name}`;
-  }
-  return name;
-}
+// /** 23. Self-Deprecating Irony */
+// function applySelfDeprecatingIrony(name: string): string {
+//   const seriousTerms = ["divine", "celestial", "epic"];
+//   if (seriousTerms.some(term => name.toLowerCase().includes(term))) {
+//     return `wannabe ${name}`;
+//   }
+//   return name;
+// }
 
-/** 24. Mock-Inspirational Phrasing */
+// /** 24. Mock-Inspirational Phrasing */
 // function applyMockInspirationalPhrasing(name: string): string {
 //   const inspirations = ["epic", "zen"];
 //   const mundane = ["cereal", "desk"];
@@ -305,18 +309,18 @@ function applySelfDeprecatingIrony(name: string): string {
 //   return name;
 // }
 
-// /** 26. Seasonal or Temporal Tie-Ins */
+// // /** 26. Seasonal or Temporal Tie-Ins */
 // function applySeasonalOrTemporalTieIns(name: string, season: string = "winter"): string {
 //   return `${name} (${season} special)`;
 // }
 
-/** 27. Unexpected Punctuation Influence */
-function applyUnexpectedPunctuationInfluence(name: string): string {
-  if (Math.random() < 0.2) {
-    return name.replace(" ", " - ");
-  }
-  return name;
-}
+// /** 27. Unexpected Punctuation Influence */
+// function applyUnexpectedPunctuationInfluence(name: string): string {
+//   if (Math.random() < 0.2) {
+//     return name.replace(" ", " - ");
+//   }
+//   return name;
+// }
 
 /* ================================
    Main Generator Function with Debug Log
@@ -343,24 +347,24 @@ export function generateFunnyNameWithDebug(params: GeneratorParams): { name: str
   debugLog.push(`Initial candidate pool size for second word: ${candidateIndices.length}.`);
   
   // --- Step 3: Apply filtering conditions (1, 2, 3, 4, 5, 6, 7, 8, 10, 15, 16, 17, 18, 21, 25, 28, 29, 30).
-  // candidateIndices = applyCondition("1. Meme & Trend Alignment", candidateIndices, conditionMemeAlignment, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("2. Explicit Consistency", candidateIndices, conditionExplicitConsistency, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("3. Multi-Word Balance", candidateIndices, conditionMultiWordBalance, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("4. Abstract vs. Down-to-Earth", candidateIndices, conditionAbstractVersusDownToEarth, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("5. Rhythm & Sound Matching", candidateIndices, conditionRhythmAndSoundMatching, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("6. Nostalgia & Retro References", candidateIndices, conditionNostalgiaAndRetroReferences, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("7. Tech-Infused Mythology", candidateIndices, conditionTechInfusedMythology, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("8. Subculture & Counter-Culture Twist", candidateIndices, conditionSubcultureAndCounterCultureTwist, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("10. Contextual Irony Injection", candidateIndices, conditionContextualIronyInjection, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("15. Unexpected Genre-Mashups", candidateIndices, conditionUnexpectedGenreMashups, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("16. Hyperbolic Adjective Amplification", candidateIndices, conditionHyperbolicAdjectiveAmplification, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("17. Nerd-Rebel Hybridization", candidateIndices, conditionNerdRebelHybridization, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("18. Literal vs. Figurative Play", candidateIndices, conditionLiteralVsFigurativePlay, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("21. Subcultural Archetype Alignment", candidateIndices, conditionSubculturalArchetypeAlignment, firstWord || "", secondParts, debugLog);
-  // candidateIndices = applyCondition("25. Phonetic Alliteration/Rhyme", candidateIndices, conditionPhoneticAlliterationOrRhyme, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("28. Surreal Visual Imagery", candidateIndices, conditionSurrealVisualImagery, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("29. Dynamic Cultural Juxtaposition", candidateIndices, conditionDynamicCulturalJuxtaposition, firstWord || "", secondParts, debugLog);
   candidateIndices = applyCondition("30. Synesthetic Pairing Principle", candidateIndices, conditionSynestheticPairing, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("1. Meme & Trend Alignment", candidateIndices, conditionMemeAlignment, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("3. Multi-Word Balance", candidateIndices, conditionMultiWordBalance, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("4. Abstract vs. Down-to-Earth", candidateIndices, conditionAbstractVersusDownToEarth, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("5. Rhythm & Sound Matching", candidateIndices, conditionRhythmAndSoundMatching, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("10. Contextual Irony Injection", candidateIndices, conditionContextualIronyInjection, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("18. Literal vs. Figurative Play", candidateIndices, conditionLiteralVsFigurativePlay, firstWord || "", secondParts, debugLog);
+  // candidateIndices = applyCondition("25. Phonetic Alliteration/Rhyme", candidateIndices, conditionPhoneticAlliterationOrRhyme, firstWord || "", secondParts, debugLog);
   
   if (candidateIndices.length === 0) {
     candidateIndices = secondParts.map((_, idx) => idx);
