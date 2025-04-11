@@ -49,14 +49,17 @@ export default function Home() {
   }, [animationCount, multiplier, increment, modulus, entropyWeight]);
 
   return (
-    <div className="min-h-screen  py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-screen mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <h1 className="p-3 text-3xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
           Aesthetic Generator
         </h1>
-        <p className="text-lg font-medium text-gray-900">{generatedName}</p>
-        <div className="p-8 flex" id="main-content">
-          <div id="left" className="space-y-6">
+        <p className="text-4xl font-extrabold text-gray-900 text-center">{generatedName
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}</p>
+        <div className="p-8 md:max-2xl:flex sm:flex-col justify-between" id="main-content">
+          <div id="left" className="space-y-6 w-full">
 
             {/* Settings popover for adjustable parameters */}
             <Popover>
@@ -155,7 +158,7 @@ export default function Home() {
                       variant="outline"
                       size="sm"
                       onClick={handleReset}
-                      className="ml-4 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="ml-4 text-red-600 hover:text-red-700 hover:bg-red-50 bg-slate-800"
                     >
                       Clear List
                     </Button>
@@ -181,10 +184,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div id="right">
+          <div id="right" className='w-full flex flex-col items-center'>
             <div className="text-center">
               {debugLog && (
-                <pre className="mt-4 p-2 bg-gray-100 text-xs text-left whitespace-pre-wrap border rounded">
+                <pre className="p-2 bg-slate-900 text-xs text-left whitespace-pre-wrap border rounded w-full h-full">
                   {debugLog}
                 </pre>
               )}

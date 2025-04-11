@@ -134,7 +134,6 @@ export const firstParts = [
   "misty",
   "molecular",
   "momentary",
-  "morose",
   "motherfucking",
   "muffled",
   "mysterious",
@@ -517,5 +516,5 @@ export const secondParts = [
   "wyrm",
   "yeti",
   "zombie",
-"abomination",
+  "abomination",
 ];

@@ -93,6 +93,7 @@
     @apply border-border;
   }
   body {
+    background-color: hsl(var(--background));
     @apply bg-background text-foreground;
   }
 }
